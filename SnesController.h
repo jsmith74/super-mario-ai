@@ -14,9 +14,37 @@ class SnesController{
         SnesController();
         ~SnesController();
 
-        void pressRight();
+        void pressUP();
+        void pressDOWN();
+        void pressLEFT();
+        void pressRIGHT();
+
+        void releaseUP();
+        void releaseDOWN();
+        void releaseLEFT();
+        void releaseRIGHT();
+
+        void pressL();
+        void pressR();
+
+        void releaseL();
+        void releaseR();
+
+        void pressSTART();
+        void pressSELECT();
+
+        void releaseSTART();
+        void releaseSELECT();
+
+        void pressY();
+        void pressX();
+        void pressA();
         void pressB();
-        void releaseRight();
+
+        void releaseY();
+        void releaseX();
+        void releaseA();
+        void releaseB();
 
     private:
         XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);

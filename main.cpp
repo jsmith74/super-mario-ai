@@ -5,13 +5,28 @@ int main(){
 
     SnesController controller;
 
-    controller.pressRight();
+    controller.pressA();
 
-    controller.pressB();
+    controller.pressRIGHT();
 
-    sleep(4);
+    controller.pressY();
 
-    //controller.releaseRight();
+    sleep(1);
+
+    for(int i=0;i<10;i++){
+
+        controller.releaseA();
+        sleep(1);
+        controller.pressA();
+        sleep(1);
+
+    }
+
+    controller.releaseA();
+
+    controller.releaseRIGHT();
+
+    controller.releaseY();
 
     return 0;
 

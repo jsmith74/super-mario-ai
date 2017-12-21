@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -c
+CFLAGS = -c -std=c++11 -Ofast
 XLIBS = -L/usr/X11R6/lib -lX11 -lXtst
 OBJS = SnesController.o main.o
 

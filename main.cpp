@@ -5,7 +5,14 @@ int main(){
 
     SnesController controller;
 
-    controller.testButton();
+    controller.pressRight();
 
-   return 0;
+    controller.pressB();
+
+    sleep(4);
+
+    //controller.releaseRight();
+
+    return 0;
+
 }

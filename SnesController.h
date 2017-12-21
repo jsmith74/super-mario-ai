@@ -1,6 +1,7 @@
 #ifndef SNESCONTROLLER_H_INCLUDED
 #define SNESCONTROLLER_H_INCLUDED
 
+#include <assert.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <iostream>
@@ -11,10 +12,21 @@ class SnesController{
 
     public:
         SnesController();
-        void testButton();
+        ~SnesController();
+
+        void pressRight();
+        void pressB();
+        void releaseRight();
 
     private:
-        XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, bool press,int keycode, int modifiers);
+        XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);
+
+        Display *display;
+        Window winFocus;
+        Window winRoot;
+        XKeyEvent buttonUP, buttonDOWN, buttonLEFT, buttonRIGHT, buttonL, buttonR;
+        XKeyEvent buttonSTART, buttonSELECT, buttonY, buttonX, buttonA, buttonB;
+
 
 };
 

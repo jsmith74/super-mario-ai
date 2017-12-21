@@ -1,15 +1,34 @@
 #include "SnesController.h"
 
-#define KEYCODE XK_z
-// The key code to be sent.
+#define KEYCODE XK_Right
 // A full list of available codes can be found in /usr/include/X11/keysymdef.h
 
 SnesController::SnesController(){
 
+    display = XOpenDisplay(0);
+    assert(display != NULL && "Error loading X11 Display");
+
+    std::cout << "Open emulator window..." << std::endl;
+
+    for(int i=2;i>=0;i--){
+        sleep(1);
+        std::cout << i << std::endl;
+    }
+
+// Get the root window for the current display.
+    winRoot = XDefaultRootWindow(display);
+
+// Find the window which has the current keyboard focus.
+    int revert;
+    XGetInputFocus(display, &winFocus, &revert);
+
+    buttonRIGHT = createKeyEvent(display,winFocus,winRoot,XK_Right);
+    buttonB = createKeyEvent(display,winFocus,winRoot,XK_z);
 
 }
 
-XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &winRoot, bool press,int keycode, int modifiers){
+
+XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode){
 
    XKeyEvent event;
 
@@ -24,59 +43,35 @@ XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &w
    event.y_root      = 1;
    event.same_screen = True;
    event.keycode     = XKeysymToKeycode(display, keycode);
-   event.state       = modifiers;
-
-   if(press)
-      event.type = KeyPress;
-   else
-      event.type = KeyRelease;
 
    return event;
 
 }
 
-void SnesController::testButton(){
+void SnesController::pressRight(){
 
-    std::cout << KEYCODE << std::endl;
-
-// Obtain the X11 display.
-   Display *display = XOpenDisplay(0);
-   if(display == NULL){
-      std::cout << "display" << std::endl;
-      return;
-   }
-
-   usleep(3000000);
-
-// Get the root window for the current display.
-   Window winRoot = XDefaultRootWindow(display);
-   std::cout << winRoot << std::endl;
-
-// Find the window which has the current keyboard focus.
-   Window winFocus;
-   int    revert;
-   XGetInputFocus(display, &winFocus, &revert);
-   std::cout << winFocus << std::endl << std::endl;
-
-// Send a fake key press event to the window.
-   //XKeyEvent event = createKeyEvent(display, winFocus, winRoot, true, KEYCODE, 0);
-   //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
-   //XTestFakeKeyEvent(event.display, event.keycode, True, CurrentTime);
-
-// Send a fake key release event to the window.
-   XKeyEvent event = createKeyEvent(display, winFocus, winRoot, true, KEYCODE, 0);
-   //XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
-   XTestFakeKeyEvent(event.display, event.keycode, True, 0);
-
-   event = createKeyEvent(display, winFocus, winRoot, false, KEYCODE, 0);
-
-   XTestFakeKeyEvent(event.display, event.keycode, False, 1000);
-
-
-// Done.
-   XCloseDisplay(display);
+    XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, True, 0);
 
     return;
 
 }
 
+void SnesController::releaseRight(){
+
+    XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, True, 0);
+
+    return;
+
+}
+
+void SnesController::pressB(){
+
+    XTestFakeKeyEvent(buttonB.display, buttonB.keycode, True, 0);
+
+}
+
+SnesController::~SnesController(){
+
+    XCloseDisplay(display);
+
+}

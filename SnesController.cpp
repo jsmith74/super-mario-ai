@@ -1,22 +1,16 @@
-// Send a fake keystroke event to an X window.
-// by Adam Pierce - http://www.doctort.org/adam/
-// This is public domain software. It is free to use by anyone for any purpose.
+#include "SnesController.h"
 
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <iostream>
-#include <unistd.h>
-#include <X11/extensions/XTest.h>
-
+#define KEYCODE XK_z
 // The key code to be sent.
 // A full list of available codes can be found in /usr/include/X11/keysymdef.h
-#define KEYCODE XK_z
 
-// Function to create a keyboard event
-XKeyEvent createKeyEvent(Display *display, Window &win,
-                           Window &winRoot, bool press,
-                           int keycode, int modifiers)
-{
+SnesController::SnesController(){
+
+
+}
+
+XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &winRoot, bool press,int keycode, int modifiers){
+
    XKeyEvent event;
 
    event.display     = display;
@@ -38,10 +32,10 @@ XKeyEvent createKeyEvent(Display *display, Window &win,
       event.type = KeyRelease;
 
    return event;
+
 }
 
-
-main(){
+void SnesController::testButton(){
 
     std::cout << KEYCODE << std::endl;
 
@@ -49,7 +43,7 @@ main(){
    Display *display = XOpenDisplay(0);
    if(display == NULL){
       std::cout << "display" << std::endl;
-      return -1;
+      return;
    }
 
    usleep(3000000);
@@ -81,5 +75,8 @@ main(){
 
 // Done.
    XCloseDisplay(display);
-   return 0;
+
+    return;
+
 }
+

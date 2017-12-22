@@ -11,9 +11,9 @@ int main(){
 
     controller.pressY();
 
-    sleep(1);
+    sleep(6);
 
-    for(int i=0;i<10;i++){
+    for(int i=0;i<20;i++){
 
         controller.releaseA();
         sleep(1);

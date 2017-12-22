@@ -35,6 +35,9 @@ SnesController::SnesController(){
     buttonA = createKeyEvent(display,winFocus,winRoot,XK_x);
     buttonB = createKeyEvent(display,winFocus,winRoot,XK_z);
 
+    buttonSaveState = createKeyEvent(display,winFocus,winRoot,XK_k);
+    buttonLoadState = createKeyEvent(display,winFocus,winRoot,XK_l);
+
 }
 
 
@@ -55,6 +58,20 @@ XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &w
    event.keycode     = XKeysymToKeycode(display, keycode);
 
    return event;
+
+}
+
+void SnesController::saveState(){
+
+    XTestFakeKeyEvent(buttonSaveState.display, buttonSaveState.keycode, True, 0);
+    XTestFakeKeyEvent(buttonSaveState.display, buttonSaveState.keycode, False, 1000);
+
+}
+
+void SnesController::loadState(){
+
+    XTestFakeKeyEvent(buttonLoadState.display, buttonLoadState.keycode, True, 0);
+    XTestFakeKeyEvent(buttonLoadState.display, buttonLoadState.keycode, False, 1000);
 
 }
 

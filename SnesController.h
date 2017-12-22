@@ -46,6 +46,9 @@ class SnesController{
         void releaseA();
         void releaseB();
 
+        void saveState();
+        void loadState();
+
     private:
         XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);
 
@@ -54,6 +57,7 @@ class SnesController{
         Window winRoot;
         XKeyEvent buttonUP, buttonDOWN, buttonLEFT, buttonRIGHT, buttonL, buttonR;
         XKeyEvent buttonSTART, buttonSELECT, buttonY, buttonX, buttonA, buttonB;
+        XKeyEvent buttonSaveState,buttonLoadState;
 
 
 };

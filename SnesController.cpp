@@ -99,7 +99,9 @@ void SnesController::pressLEFT(){
 
 void SnesController::pressRIGHT(){
 
-    XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, True, 0);
+    //XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, True, 0);
+    buttonRIGHT.type = KeyPress;
+    XSendEvent(buttonRIGHT.display, buttonRIGHT.window, True, KeyPressMask, (XEvent *)&buttonRIGHT);
     XFlush(buttonRIGHT.display);
 
 }
@@ -127,7 +129,9 @@ void SnesController::releaseLEFT(){
 
 void SnesController::releaseRIGHT(){
 
-    XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, False, 0);
+    //XTestFakeKeyEvent(buttonRIGHT.display, buttonRIGHT.keycode, False, 0);
+    buttonRIGHT.type = KeyRelease;
+    XSendEvent(buttonRIGHT.display, buttonRIGHT.window, True, KeyPressMask, (XEvent *)&buttonRIGHT);
     XFlush(buttonRIGHT.display);
 
 }
@@ -190,7 +194,9 @@ void SnesController::releaseSELECT(){
 
 void SnesController::pressY(){
 
-    XTestFakeKeyEvent(buttonY.display, buttonY.keycode, True, 0);
+    //XTestFakeKeyEvent(buttonY.display, buttonY.keycode, True, 0);
+    buttonY.type = KeyPress;
+    XSendEvent(buttonY.display, buttonY.window, True, KeyPressMask, (XEvent *)&buttonY);
     XFlush(buttonY.display);
 
 }
@@ -204,7 +210,10 @@ void SnesController::pressX(){
 
 void SnesController::pressA(){
 
-    XTestFakeKeyEvent(buttonA.display, buttonA.keycode, True, 0);
+    //XTestFakeKeyEvent(buttonA.display, buttonA.keycode, True, 0);
+    buttonA.type = KeyPress;
+    XSendEvent(buttonA.display, buttonA.window, True, KeyPressMask, (XEvent *)&buttonA);
+
     XFlush(buttonA.display);
 
 }
@@ -218,7 +227,9 @@ void SnesController::pressB(){
 
 void SnesController::releaseY(){
 
-    XTestFakeKeyEvent(buttonY.display, buttonY.keycode, False, 0);
+    //XTestFakeKeyEvent(buttonY.display, buttonY.keycode, False, 0);
+    buttonY.type = KeyRelease;
+    XSendEvent(buttonY.display, buttonY.window, True, KeyPressMask, (XEvent *)&buttonY);
     XFlush(buttonY.display);
 
 }
@@ -232,7 +243,10 @@ void SnesController::releaseX(){
 
 void SnesController::releaseA(){
 
-    XTestFakeKeyEvent(buttonA.display, buttonA.keycode, False, 0);
+    //XTestFakeKeyEvent(buttonA.display, buttonA.keycode, False, 0);
+    buttonA.type = KeyRelease;
+    XSendEvent(buttonA.display, buttonA.window, True, KeyPressMask, (XEvent *)&buttonA);
+
     XFlush(buttonA.display);
 
 }

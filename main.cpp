@@ -5,6 +5,18 @@ int main(){
 
     SnesController controller;
 
+    controller.pressUP();
+
+    sleep(2);
+
+    controller.releaseUP();
+
+    controller.pressDOWN();
+
+    sleep(1);
+
+    controller.releaseDOWN();
+
     controller.pressA();
 
     controller.pressRIGHT();
@@ -13,7 +25,7 @@ int main(){
 
     sleep(6);
 
-    for(int i=0;i<20;i++){
+    for(int i=0;i<15;i++){
 
         controller.releaseA();
         sleep(1);

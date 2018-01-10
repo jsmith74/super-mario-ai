@@ -15,4 +15,4 @@ SnesController.o: SnesController.cpp
 	$(CC) $(CFLAGS) $(XLIBS) SnesController.cpp
 
 clean:
-	rm *.o MarioAi
+	rm *.o MarioAi *.dat

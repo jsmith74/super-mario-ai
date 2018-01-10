@@ -26,32 +26,40 @@ int main(){
 
     for(int test = 0;test<100;test++){
 
-    k = 0;
+        k = 0;
 
-    for(int i=0;i<400;i++) for(int j=400;j>=0;j--){
+        for(int i=0;i<200;i++) for(int j=0;j<400;j++){
 
-        pixels[k] = XGetPixel( &eyeTest,i,j );
-        k++;
+            pixels[k] = XGetPixel( &eyeTest,i,j );
+            k++;
+
+        }
 
     }
 
-    }
-
-    for(int i=0;i<k;i++) std::cout << pixels[i] << std::endl;
+    //for(int i=0;i<k;i++) std::cout << pixels[i] << std::endl;
 
     std::ofstream printTest("file.dat");
 
     k = 0;
 
-    for(int i=0;i<400;i++) for(int j=0;j<400;j++){
+    for(int i=0;i<400;i++) for(int j=0;j<200;j++){
 
-        printTest << i << "\t" << j << "\t" << pixels[k] << std::endl;
+        printTest << i << "\t" << -j << "\t" << pixels[k] << std::endl;
 
         k++;
 
     }
 
     printTest.close();
+
+    int windowWidth, windowHeight;
+
+    XWindowAttributes attrib;
+
+    XGetWindowAttributes(display,winFocus,&attrib);
+
+    std::cout << attrib.height << "\t" << attrib.width << std::endl;
 
 //    SnesController controller;
 //

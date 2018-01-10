@@ -7,13 +7,6 @@ SnesController::SnesController(){
     display = XOpenDisplay(0);
     assert(display != NULL && "Error loading X11 Display");
 
-    std::cout << "Open emulator window..." << std::endl;
-
-    for(int i=2;i>=0;i--){
-        sleep(1);
-        std::cout << i << std::endl;
-    }
-
     winRoot = XDefaultRootWindow(display);
 
     int revert;

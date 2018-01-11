@@ -13,19 +13,29 @@ class Eyes{
         Eyes();
         ~Eyes();
 
-        void look();
+        void lookScreen();
         void printLastSeen();
+        void findMario();
+        void printScreenSection(int xStart,int xEnd,int yStart,int yEnd);
+        int marioPosition[2];
 
     private:
         Display* display;
         Window winFocus;
         Window winRoot;
+        XImage screenImage;
 
         std::vector<unsigned long> pixels;
 
         int idx(int& x,int& y);
 
-        int width,height;
+        int screenWidth,screenHeight;
+
+        bool localMarioSearch(int X,int Y);
+        bool isMario(int X,int Y);
+
+        int marioWidth,marioHeight;
+
 
 };
 

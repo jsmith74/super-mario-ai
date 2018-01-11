@@ -13,19 +13,11 @@ int main(){
 
     Eyes eyes;
 
-    SnesController controller;
+    std::cout << "go" << std::endl;
 
-    controller.pressUP();
+    eyes.lookScreen();
 
-    sleep(1);
-
-    eyes.look();
-
-    sleep(1);
-
-    controller.releaseUP();
-
-    eyes.printLastSeen();
+    eyes.findMario();
 
     return 0;
 

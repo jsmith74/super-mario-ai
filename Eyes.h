@@ -1,6 +1,7 @@
 #ifndef EYES_H_INCLUDED
 #define EYES_H_INCLUDED
 
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <X11/Xutil.h>
 #include <assert.h>
 #include <vector>

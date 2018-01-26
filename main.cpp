@@ -19,7 +19,7 @@ int main(){
 
     eyes.lookScreen();
 
-    eyes.findMario();
+    eyes.printLastSeen();
 
     return 0;
 

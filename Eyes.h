@@ -16,9 +16,7 @@ class Eyes{
 
         void lookScreen();
         void printLastSeen();
-        void findMario();
         void printScreenSection(int xStart,int xEnd,int yStart,int yEnd);
-        int marioPosition[2];
 
     private:
         Display* display;
@@ -26,17 +24,13 @@ class Eyes{
         Window winRoot;
         XImage screenImage;
 
-        std::vector<unsigned long> pixels;
+        Eigen::VectorXd pixels;
 
         int idx(int& x,int& y);
+        int idxT(int x,int y);
 
         int screenWidth,screenHeight;
-
-        bool localMarioSearch(int X,int Y);
-        bool isMario(int X,int Y);
-
-        int marioWidth,marioHeight;
-
+        int strideWidth, strideHeight;
 
 };
 

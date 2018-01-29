@@ -50,8 +50,10 @@ class SnesController{
         void loadState();
 
         void pollController();
+        void monitorController();
+        void printPressedButtons(int config);
+        void setControllerConfig(int config);
         int configuration;
-        bool boolUP,boolDOWN,boolLEFT,boolRIGHT,boolA,boolB,boolY,boolX;
 
     private:
         XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);
@@ -62,6 +64,8 @@ class SnesController{
         XKeyEvent buttonUP, buttonDOWN, buttonLEFT, buttonRIGHT, buttonL, buttonR;
         XKeyEvent buttonSTART, buttonSELECT, buttonY, buttonX, buttonA, buttonB;
         XKeyEvent buttonSaveState,buttonLoadState;
+
+        bool boolConfigutarion[7];
 
 
 };

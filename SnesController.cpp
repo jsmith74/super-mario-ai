@@ -31,41 +31,160 @@ SnesController::SnesController(){
     buttonSaveState = createKeyEvent(display,winFocus,winRoot,XK_k);
     buttonLoadState = createKeyEvent(display,winFocus,winRoot,XK_l);
 
-    boolUP = false;
-    boolDOWN = false;
-    boolLEFT = false;
-    boolRIGHT = false;
-    boolY = false;
-    boolX = false;
-    boolB = false;
-    boolA = false;
-
+    for(int i=0;i<7;i++) boolConfigutarion[i] = false;
 }
 
-void SnesController::pollController(){
+void SnesController::monitorController(){
 
     XEvent event;
     XSelectInput(display, winFocus, KeyPressMask | KeyReleaseMask );
 
     while(true){
 
-    XNextEvent(display, &event);
+        XNextEvent(display, &event);
 
-    if (event.type == KeyPress){
+        if (event.type == KeyPress){
+            if(event.xkey.keycode == 52){
+                assert(!boolConfigutarion[0]);
+                boolConfigutarion[0] = true;
+            }
+            if(event.xkey.keycode == 53){
+                assert(!boolConfigutarion[1]);
+                boolConfigutarion[1] = true;
+            }
+            if(event.xkey.keycode == 38){
+                assert(!boolConfigutarion[2]);
+                boolConfigutarion[2] = true;
+            }
+            if(event.xkey.keycode == 113){
+                assert(!boolConfigutarion[3]);
+                boolConfigutarion[3] = true;
+            }
+            if(event.xkey.keycode == 114){
+                assert(!boolConfigutarion[4]);
+                boolConfigutarion[4] = true;
+            }
+            if(event.xkey.keycode == 111){
+                assert(!boolConfigutarion[5]);
+                boolConfigutarion[5] = true;
+            }
+            if(event.xkey.keycode == 116){
+                assert(!boolConfigutarion[6]);
+                boolConfigutarion[6] = true;
+            }
 
-        std::cout << "Key press: " << event.xkey.keycode << "\t" << XK_z << std::endl;
+            if(event.xkey.keycode == 58) return;
 
-        if(event.xkey.keycode == 58) return;
+        }
+
+        if (event.type == KeyRelease){
+            if(event.xkey.keycode == 52) boolConfigutarion[0] = false;
+            if(event.xkey.keycode == 53) boolConfigutarion[1] = false;
+            if(event.xkey.keycode == 38) boolConfigutarion[2] = false;
+            if(event.xkey.keycode == 113) boolConfigutarion[3] = false;
+            if(event.xkey.keycode == 114) boolConfigutarion[4] = false;
+            if(event.xkey.keycode == 111) boolConfigutarion[5] = false;
+            if(event.xkey.keycode == 116) boolConfigutarion[6] = false;
+
+        }
 
     }
 
-    if (event.type == KeyRelease){
-
-        std::cout << "Key release: " << event.xkey.keycode << std::endl;
-
-    }
+    return;
 
 }
+
+void SnesController::setControllerConfig(int config){
+
+    configuration = config;
+
+    if(config/64==1){
+        pressDOWN();
+        config -= 64;
+    }
+    else releaseDOWN();
+
+    if(config/32==1){
+        pressUP();
+        config -= 32;
+    }
+    else releaseUP();
+
+    if(config/16==1){
+        pressRIGHT();
+        config -= 16;
+    }
+    else releaseRIGHT();
+
+    if(config/8==1){
+        pressLEFT();
+        config -= 8;
+    }
+    else releaseLEFT();
+
+    if(config/4==1){
+        pressY();
+        config -= 4;
+    }
+    else releaseY();
+
+    if(config/2==1){
+        pressA();
+        config -= 2;
+    }
+    else releaseA();
+
+    if(config==1){
+        pressB();
+    }
+    else releaseB();
+
+    return;
+
+}
+
+void SnesController::printPressedButtons(int config){
+
+    std::cout << "Pressed buttons:\n";
+
+    if(config/64==1){
+        std::cout << "Down" << std::endl;
+        config -= 64;
+    }
+    if(config/32==1){
+        std::cout << "Up" << std::endl;
+        config -= 32;
+    }
+    if(config/16==1){
+        std::cout << "Right" << std::endl;
+        config -= 16;
+    }
+    if(config/8==1){
+        std::cout << "Left" << std::endl;
+        config -= 8;
+    }
+    if(config/4==1){
+        std::cout << "Y" << std::endl;
+        config -= 4;
+    }
+    if(config/2==1){
+        std::cout << "A" << std::endl;
+        config -= 2;
+    }
+    if(config==1){
+        std::cout << "B" << std::endl;
+    }
+
+    return;
+
+}
+
+void SnesController::pollController(){
+
+    configuration =  1 * boolConfigutarion[0] +  2 * boolConfigutarion[1] +
+                     4 * boolConfigutarion[2] +  8 * boolConfigutarion[3] +
+                    16 * boolConfigutarion[4] + 32 * boolConfigutarion[5] +
+                    64 * boolConfigutarion[6];
 
     return;
 

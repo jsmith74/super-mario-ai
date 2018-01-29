@@ -1,20 +1,39 @@
 #include "Eyes.h"
 
 #define MARIO_HAT_RED 16269424
+#define STRIDE 2
 
 int Eyes::idx(int& x,int& y){
 
-    return x + y * screenWidth;
+    return x + y * pixels.rows();
 
 }
 
 int Eyes::idxT(int x,int y){
 
-    return x + y * screenWidth;
+    return x + y * pixels.rows();
 
 }
 
 Eyes::Eyes(){
+
+    avgX = 0;
+    stdDevX = 1.0;
+
+    vEdgefilter.resize(5,5);
+    hEdgefilter.resize(5,5);
+
+    vEdgefilter << 1,1,0,-1,-1,
+                   1,1,0,-1,-1,
+                   1,1,0,-1,-1,
+                   1,1,0,-1,-1,
+                   1,1,0,-1,-1;
+
+    hEdgefilter <<  1,-1, 1,-1, 1,
+                   -1, 1,-1, 1,-1,
+                    1,-1, 1,-1, 1,
+                   -1, 1,-1, 1,-1,
+                    1,-1, 1,-1, 1;
 
     display = XOpenDisplay(0);
     assert(display != NULL && "Error loading X11 Display");
@@ -29,9 +48,20 @@ Eyes::Eyes(){
     screenWidth = attrib.width;
     screenHeight = attrib.height;
 
-    std::cout << "Input size: " << screenWidth * screenHeight << std::endl;
+    funcDimension = ((screenHeight-vEdgefilter.rows())/STRIDE + 1) * ((screenWidth-vEdgefilter.cols())/STRIDE + 1);
 
-    pixels.resize( screenWidth * screenHeight );
+    std::cout << "Input size: " << funcDimension << std::endl;
+
+    pixels.resize( screenWidth , screenHeight );
+
+}
+
+void Eyes::setXStatistics(double XAverage,double XStandardDeviation){
+
+    avgX = XAverage;
+    stdDevX = XStandardDeviation;
+
+    return;
 
 }
 
@@ -39,7 +69,7 @@ void Eyes::printScreenSection(int xStart,int xEnd,int yStart, int yEnd){
 
     std::ofstream outfile("screenShot.dat");
 
-    for(int y=yStart;y<yEnd;y++) for(int x=xStart;x<xEnd;x++) outfile << x << "\t" << y << "\t" << pixels[ idx(x,y) ] << std::endl;
+    for(int y=yStart;y<yEnd;y++) for(int x=xStart;x<xEnd;x++) outfile << x << "\t" << y << "\t" << pixels( x,y ) << std::endl;
 
     outfile.close();
 
@@ -47,19 +77,33 @@ void Eyes::printScreenSection(int xStart,int xEnd,int yStart, int yEnd){
 
 }
 
+Eigen::MatrixXd Eyes::convolve(Eigen::MatrixXd& M,Eigen::MatrixXd& filter,int stride){
+
+    Eigen::MatrixXd output( (M.rows()-filter.rows())/stride + 1, (M.cols()-filter.cols())/stride + 1 );
+    for(int i=0;i<M.rows()-filter.rows()+1;i+=stride) for(int j=0;j<M.cols()-filter.cols()+1;j+=stride){
+
+        output(i/stride,j/stride) = ( filter.array() * M.block(i,j,filter.rows(),filter.cols()).array() ).sum();
+
+    }
+
+    return output;
+
+}
 
 
 void Eyes::lookScreen(){
 
+    pixels.resize( screenWidth , screenHeight );
+
     screenImage = *XGetImage(display,winFocus,0,0,screenWidth,screenHeight,XAllPlanes(),ZPixmap);
 
-    for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) pixels( idx(x,y) ) = (XGetPixel(&screenImage,x,screenHeight - y - 1));
+    for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) pixels( x,y ) = (XGetPixel(&screenImage,x,screenHeight - y - 1));
 
-    //pixels = pixels.array() - pixels.mean();
+    pixels = convolve(pixels,hEdgefilter,STRIDE);
 
-    //double stdDev = sqrt( (pixels.array() * pixels.array() ).sum() / ( 1.0*pixels.size() - 1.0 ) );
+    pixels = pixels.array() - avgX;
 
-    //pixels /= stdDev;
+    pixels /= stdDevX;
 
     return;
 
@@ -70,7 +114,7 @@ void Eyes::printLastSeen(){
 
     std::ofstream outfile("screenShot.dat");
 
-    for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) outfile << x << "\t" << y << "\t" << pixels( idx(x,y) ) << std::endl;
+    for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++) outfile << x << "\t" << y << "\t" << pixels( x,y ) << std::endl;
 
     outfile.close();
 
@@ -80,9 +124,36 @@ void Eyes::printLastSeen(){
 
 void Eyes::printLastSeen(std::ofstream& outfile){
 
-    for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) outfile << pixels( idx(x,y) ) << "\t";
+    for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++) outfile << pixels( x,y ) << "\t";
 
     return;
+
+}
+
+void Eyes::printXVector(Eigen::VectorXd X){
+
+    std::ofstream outfile("screenShotX.dat");
+
+    for(int y=0;y<pixels.cols();y++)
+    for(int x=0;x<pixels.rows();x++) outfile << x << "\t"
+                                    << y << "\t" << X( idx(x,y) ) << std::endl;
+
+    outfile.close();
+
+    return;
+}
+
+Eigen::VectorXd Eyes::returnVectorImage(){
+
+    Eigen::VectorXd output(56388);
+
+    for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++){
+
+        output( idx(x,y) ) = pixels(x,y);
+
+    }
+
+    return output;
 
 }
 

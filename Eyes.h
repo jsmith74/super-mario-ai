@@ -1,7 +1,8 @@
 #ifndef EYES_H_INCLUDED
 #define EYES_H_INCLUDED
 
-#include <unsupported/Eigen/CXX11/Tensor>
+//#include <unsupported/Eigen/CXX11/Tensor>
+#include <Eigen/Dense>
 #include <X11/Xutil.h>
 #include <assert.h>
 #include <vector>
@@ -18,6 +19,9 @@ class Eyes{
         void printLastSeen();
         void printScreenSection(int xStart,int xEnd,int yStart,int yEnd);
         void printLastSeen(std::ofstream& outfile);
+        void printXVector(Eigen::VectorXd X);
+        void setXStatistics(double XAverage,double XStandardDeviation);
+        Eigen::VectorXd returnVectorImage();
 
     private:
         Display* display;
@@ -25,13 +29,17 @@ class Eyes{
         Window winRoot;
         XImage screenImage;
 
-        Eigen::VectorXd pixels;
+        Eigen::MatrixXd pixels;
 
         int idx(int& x,int& y);
         int idxT(int x,int y);
 
-        int screenWidth,screenHeight;
-        int strideWidth, strideHeight;
+        int screenWidth,screenHeight, funcDimension;
+        Eigen::MatrixXd vEdgefilter, hEdgefilter;
+
+        Eigen::MatrixXd convolve(Eigen::MatrixXd& M,Eigen::MatrixXd& filter,int stride);
+
+        double avgX, stdDevX;
 
 };
 

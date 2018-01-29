@@ -29,8 +29,7 @@ Eyes::Eyes(){
     screenWidth = attrib.width;
     screenHeight = attrib.height;
 
-    /** UP TO HERE - ADD CODE TO ACCOUNT FOR A STRIDE ACCROSS THE SCREEN, MAKE
-    THE STRIDE AS LARGE AS POSSIBLE SO THAT YOU CAN STILL TELL WHATS HAPPENING ON SCREEN */
+    std::cout << "Input size: " << screenWidth * screenHeight << std::endl;
 
     pixels.resize( screenWidth * screenHeight );
 
@@ -56,11 +55,11 @@ void Eyes::lookScreen(){
 
     for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) pixels( idx(x,y) ) = (XGetPixel(&screenImage,x,screenHeight - y - 1));
 
-    pixels = pixels.array() - pixels.mean();
+    //pixels = pixels.array() - pixels.mean();
 
-    double stdDev = sqrt( (pixels.array() * pixels.array() ).sum() / ( 1.0*pixels.size() - 1.0 ) );
+    //double stdDev = sqrt( (pixels.array() * pixels.array() ).sum() / ( 1.0*pixels.size() - 1.0 ) );
 
-    pixels /= stdDev;
+    //pixels /= stdDev;
 
     return;
 
@@ -74,6 +73,14 @@ void Eyes::printLastSeen(){
     for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) outfile << x << "\t" << y << "\t" << pixels( idx(x,y) ) << std::endl;
 
     outfile.close();
+
+    return;
+
+}
+
+void Eyes::printLastSeen(std::ofstream& outfile){
+
+    for(int y=0;y<screenHeight;y++) for(int x=0;x<screenWidth;x++) outfile << pixels( idx(x,y) ) << "\t";
 
     return;
 

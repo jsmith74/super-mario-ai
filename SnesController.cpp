@@ -31,8 +31,45 @@ SnesController::SnesController(){
     buttonSaveState = createKeyEvent(display,winFocus,winRoot,XK_k);
     buttonLoadState = createKeyEvent(display,winFocus,winRoot,XK_l);
 
+    boolUP = false;
+    boolDOWN = false;
+    boolLEFT = false;
+    boolRIGHT = false;
+    boolY = false;
+    boolX = false;
+    boolB = false;
+    boolA = false;
+
 }
 
+void SnesController::pollController(){
+
+    XEvent event;
+    XSelectInput(display, winFocus, KeyPressMask | KeyReleaseMask );
+
+    while(true){
+
+    XNextEvent(display, &event);
+
+    if (event.type == KeyPress){
+
+        std::cout << "Key press: " << event.xkey.keycode << "\t" << XK_z << std::endl;
+
+        if(event.xkey.keycode == 58) return;
+
+    }
+
+    if (event.type == KeyRelease){
+
+        std::cout << "Key release: " << event.xkey.keycode << std::endl;
+
+    }
+
+}
+
+    return;
+
+}
 
 XKeyEvent SnesController::createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode){
 

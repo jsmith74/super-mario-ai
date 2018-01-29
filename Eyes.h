@@ -17,6 +17,7 @@ class Eyes{
         void lookScreen();
         void printLastSeen();
         void printScreenSection(int xStart,int xEnd,int yStart,int yEnd);
+        void printLastSeen(std::ofstream& outfile);
 
     private:
         Display* display;

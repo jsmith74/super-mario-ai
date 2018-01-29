@@ -49,6 +49,10 @@ class SnesController{
         void saveState();
         void loadState();
 
+        void pollController();
+        int configuration;
+        bool boolUP,boolDOWN,boolLEFT,boolRIGHT,boolA,boolB,boolY,boolX;
+
     private:
         XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);
 

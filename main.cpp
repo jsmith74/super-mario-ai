@@ -6,9 +6,9 @@
 #include <unistd.h>
 #include <iomanip>
 
-#define DATA_SIZE 300
-#define AVERAGE 3650694.186012154
-#define STANDARD_DEVIATION 4383510.452386877
+#define DATA_SIZE 10000
+#define AVERAGE -1.0
+#define STANDARD_DEVIATION -1.0
 #define TEST_SAMPLE 14
 
 #define LAYERS 3

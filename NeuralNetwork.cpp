@@ -79,7 +79,7 @@ void NeuralNetwork::train(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
 
 }
 
-void NeuralNetwork::ClassificationTest(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
+void NeuralNetwork::trainingDataClassificationTest(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
 
     std::ofstream outfile("classificationTest.txt");
 

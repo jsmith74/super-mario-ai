@@ -1,5 +1,3 @@
-#include "Eyes.h"
-#include "SnesController.h"
 #include <fstream>
 #include "NeuralNetwork.h"
 #include <omp.h>
@@ -14,8 +12,6 @@
 #define LAYERS 3
 #define LAYER_ARRAY {56388,10,128}
 
-void createTrainingData();
-void play();
 void trainNeuralNetwork();
 
 template<class EMClass>
@@ -25,11 +21,7 @@ void importFromData(std::string filename,EMClass& dataStruct,int rows,int cols);
 
 int main(){
 
-    createTrainingData();
-
-    //trainNeuralNetwork();
-
-    //play();
+    trainNeuralNetwork();
 
     return 0;
 
@@ -77,53 +69,7 @@ void trainNeuralNetwork(){
 
 }
 
-void play(){
 
-    std::cout << "Open emulator window..." << std::endl;
-    for(int i=2;i>=0;i--){
-        sleep(1);
-        std::cout << i << std::endl;
-    }
-    std::cout << "go" << std::endl;
-
-    Eyes eyes;
-    SnesController controller;
-
-    int layerTest[LAYERS] = LAYER_ARRAY;
-
-    NeuralNetwork marioAI(LAYERS,128,layerTest);
-    marioAI.importTheta();
-
-    double avg = AVERAGE;
-    double stdDev = STANDARD_DEVIATION;
-
-    eyes.setXStatistics(avg,stdDev);
-
-    int intendedConfig;
-
-    while(true){
-
-        usleep(100000);
-
-        eyes.lookScreen();
-
-        Eigen::VectorXd XTemp = eyes.returnVectorImage();
-
-        //eyes.printXVector( XTemp );
-
-        marioAI.feedForwardPropagate( XTemp );
-
-        intendedConfig = marioAI.returnPrediction();
-
-        controller.setControllerConfig( intendedConfig );
-
-        controller.printPressedButtons( intendedConfig );
-
-    }
-
-    return;
-
-}
 
 template<class EMClass>
 void importFromData(std::string filename,EMClass& dataStruct,int rows,int cols){
@@ -142,56 +88,3 @@ void importFromData(std::string filename,EMClass& dataStruct,int rows,int cols){
 
 }
 
-void createTrainingData(){
-
-    std::cout << "Open emulator window..." << std::endl;
-    for(int i=2;i>=0;i--){
-        sleep(1);
-        std::cout << i << std::endl;
-    }
-    std::cout << "go" << std::endl;
-
-    Eyes eyes;
-    SnesController controller;
-
-    remove("X.dat");
-    remove("Y.dat");
-
-    omp_set_num_threads(2);
-
-#pragma omp parallel shared(controller)
-{
-    int threadNum = omp_get_thread_num();
-
-    if( threadNum == 0 ) controller.monitorController();
-
-    else if( threadNum == 1){
-
-        for(int i=0;i<DATA_SIZE;i++){
-
-            std::cout << "Learning iteration: " << i << std::endl;
-
-            std::ofstream outfile("X.dat",std::ofstream::app);
-            usleep(200000);
-            eyes.lookScreen();
-            controller.pollController();
-            eyes.printLastSeen(outfile);
-            outfile << std::endl;
-            outfile.close();
-            outfile.open("Y.dat",std::ofstream::app);
-            outfile << controller.configuration << std::endl;
-            outfile.close();
-
-        }
-
-    }
-
-    else assert(false);
-
-    std::cout << "Thread " << threadNum << " is finished." << std::endl;
-
-}
-
-    return;
-
-}

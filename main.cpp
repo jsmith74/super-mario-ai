@@ -3,8 +3,10 @@
 #include <fstream>
 #include "NeuralNetwork.h"
 #include <omp.h>
+#include <unistd.h>
+#include <iomanip>
 
-#define DATA_SIZE 1000
+#define DATA_SIZE 3000
 
 void createTrainingData(Eyes& eyes,SnesController& controller);
 void play(NeuralNetwork& marioAI,SnesController& controller,Eyes& eyes);
@@ -24,47 +26,53 @@ int main(){
     eyes.lookScreen();
     eyes.printLastSeen();
 
-    createTrainingData(eyes,controller);
+    //createTrainingData(eyes,controller);
 
-//    Eigen::MatrixXd X(DATA_SIZE,56388);
-//    Eigen::MatrixXi Y(DATA_SIZE,1);
-//
-//    importFromData("X.dat",X,DATA_SIZE,56388);
-//    importFromData("Y.dat",Y,DATA_SIZE,1);
-//
-//    X = X.transpose().eval();
-//    Y = Y.transpose().eval();
-//
-//    double avg = X.mean();
-//    double stdDev = sqrt( ( (X.array() - avg) * (X.array() - avg) ).sum() / (X.cols()*X.rows() -1.0) );
-//
-//    eyes.setXStatistics(avg,stdDev);
-//
-//    X = (X.array() - avg);
-//    X /= stdDev;
-//
-//    Eigen::VectorXd XTest = X.col(14);
-//
-//    eyes.printXVector(XTest);
-//    controller.printPressedButtons(Y(0,14));
-//
-//    int layerTest[3] = {56388,10,128};
-//
-//    NeuralNetwork marioAI(3,128,layerTest);
-//
-//    marioAI.importTheta();
-//
-//    //marioAI.train(X,Y);
-//
-//    //marioAI.saveTheta();
-//
-//    marioAI.trainingDataClassificationTest(X,Y);
-//
-//    marioAI.feedForwardPropagate(XTest);
-//
-//    controller.printPressedButtons(marioAI.returnPrediction());
-//
-//    play(marioAI,controller,eyes);
+    //Eigen::MatrixXd X(DATA_SIZE,56388);
+    //Eigen::MatrixXi Y(DATA_SIZE,1);
+
+    //importFromData("X.dat",X,DATA_SIZE,56388);
+    //importFromData("Y.dat",Y,DATA_SIZE,1);
+
+    //X = X.transpose().eval();
+    //Y = Y.transpose().eval();
+
+    //double avg = X.mean();
+    //double stdDev = sqrt( ( (X.array() - avg) * (X.array() - avg) ).sum() / (X.cols()*X.rows() -1.0) );
+
+    double avg = 5660309.226747299;
+    double stdDev = 6996794.565084721;
+
+    //std::cout << "Average: " << std::setprecision(16) << avg << std::endl;
+    //std::cout << "Standard Deviation: " << std::setprecision(16) << stdDev << std::endl;
+
+    eyes.setXStatistics(avg,stdDev);
+
+    //X = (X.array() - avg);
+    //X /= stdDev;
+
+    //Eigen::VectorXd XTest = X.col(14);
+
+    //eyes.printXVector(XTest);
+    //controller.printPressedButtons(Y(0,14));
+
+    int layerTest[3] = {56388,10,128};
+
+    NeuralNetwork marioAI(3,128,layerTest);
+
+    marioAI.importTheta();
+
+    //marioAI.train(X,Y);
+
+    //marioAI.saveTheta();
+
+    //marioAI.trainingDataClassificationTest(X,Y);
+
+    //marioAI.feedForwardPropagate(XTest);
+
+    //controller.printPressedButtons(marioAI.returnPrediction());
+
+    play(marioAI,controller,eyes);
 
     return 0;
 
@@ -74,7 +82,9 @@ void play(NeuralNetwork& marioAI,SnesController& controller,Eyes& eyes){
 
     int intendedConfig;
     int t=0;
-    while(t<10000){
+    while(true){
+
+        usleep(200000);
 
         eyes.lookScreen();
 
@@ -135,7 +145,7 @@ void createTrainingData(Eyes& eyes,SnesController& controller){
             std::cout << "Learning iteration: " << i << std::endl;
 
             std::ofstream outfile("X.dat",std::ofstream::app);
-            sleep(1);
+            usleep(500000);
             eyes.lookScreen();
             controller.pollController();
             eyes.printLastSeen(outfile);

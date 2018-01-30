@@ -8,6 +8,7 @@
 /** STARTING WEIGHTS AND REGULARIZATION OPTIONS ===== */
 #define SCALING_FACTOR 1.0
 #define LAMBDA 1.0
+#define RANDOMIZE_STARTING_THETA
 
 /** MINIMIZER OPTIONS =============================== */
 #define PRINT_STEP_MONITOR
@@ -15,7 +16,7 @@
 #define ZOOM_GUARD 50
 #define C1 1e-4
 #define C2 0.9
-#define TOLERANCE 0.001
+#define TOLERANCE 0.01
 #define MAX_STEP_SIZE 20.0
 #define OPT_WARNING_MESSAGE
 #define ENABLE_L_BFGS
@@ -78,7 +79,7 @@ void NeuralNetwork::train(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
 
 }
 
-void NeuralNetwork::trainingDataClassificationTest(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
+void NeuralNetwork::ClassificationTest(Eigen::MatrixXd& X, Eigen::MatrixXi& Y){
 
     std::ofstream outfile("classificationTest.txt");
 
@@ -202,7 +203,17 @@ void NeuralNetwork::minimizeCostFunction(Eigen::MatrixXd& X,Eigen::MatrixXi& Y){
 
     /** ==== EXPERIMENT WITH USING MAPS INSTEAD OF COPYING DATA =============== */
 
-    for(int i=0;i<L-1;i++) Theta[i] = SCALING_FACTOR * Eigen::MatrixXd::Random( s[i+1],s[i]+1 );
+    #ifdef RANDOMIZE_STARTING_THETA
+
+        for(int i=0;i<L-1;i++) Theta[i] = SCALING_FACTOR * Eigen::MatrixXd::Random( s[i+1],s[i]+1 );
+
+    #endif // RANDOMIZE_STARTING_THETA
+
+    #ifndef RANDOMIZE_STARTING_THETA
+
+        importTheta();
+
+    #endif // RANDOMIZE_STARTING_THETA
 
     backPropagationGradient(X,Y);
 
@@ -435,7 +446,12 @@ void NeuralNetwork::backPropagationGradient(Eigen::MatrixXd& X, Eigen::MatrixXi&
 
         for(int l=L-2;l>=1;l--){
 
-            delta[l] = ( Theta[l].transpose() * delta[l+1] ).array() * a[l].array() * (1-a[l].array());
+            if( Theta[l].rows() == delta[l+1].size() ){
+                delta[l] = ( Theta[l].transpose() * delta[l+1] ).array() * a[l].array() * (1-a[l].array());
+            }
+            else{
+                delta[l] = ( Theta[l].transpose() * delta[l+1].segment(1,delta[l+1].size()-1) ).array() * a[l].array() * (1-a[l].array());
+            }
 
         }
 

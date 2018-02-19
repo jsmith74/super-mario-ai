@@ -12,6 +12,7 @@
 class NeuralNetwork{
 
     public:
+        int funcDimension;
         NeuralNetwork(int layers, int numbOutputs, int layerUnits[]);
         void feedForwardPropagate(Eigen::VectorXd& x);
         int returnPrediction();
@@ -34,7 +35,7 @@ class NeuralNetwork{
         double phiPrime0,phiPrime1,phiPrime2;
         double eps, tol, alphaMax, stepMonitor, rho, denom, stepMonitorSafety;
         double secondDerivativeTest;
-        int funcDimension, counter, cacheIndex;
+        int counter, cacheIndex;
         bool zoomGuard,quadInterpolationFailure, wolfeConditionFailure;
         bool maxStepSize, maxIterationGuard;
         Eigen::VectorXd position, alphaPosition, gradient;

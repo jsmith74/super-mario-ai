@@ -7,16 +7,17 @@
 #include <iomanip>
 
 #define DATA_SIZE 10000
-#define AVERAGE -1.0
-#define STANDARD_DEVIATION -1.0
+#define AVERAGE 6330854.822645681
+#define STANDARD_DEVIATION 7370946.75339683
 #define TEST_SAMPLE 14
 
-#define LAYERS 3
-#define LAYER_ARRAY {56388,10,128}
+#define LAYERS 5
+#define LAYER_ARRAY {56388,20,20,20,128}
 
 void createTrainingData();
 void play();
 void trainNeuralNetwork();
+void selfTeachNeuralNetwork();
 
 template<class EMClass>
 void importFromData(std::string filename,EMClass& dataStruct,int rows,int cols);
@@ -25,13 +26,81 @@ void importFromData(std::string filename,EMClass& dataStruct,int rows,int cols);
 
 int main(){
 
-    createTrainingData();
+    //createTrainingData();
 
     //trainNeuralNetwork();
+
+    selfTeachNeuralNetwork();
 
     //play();
 
     return 0;
+
+}
+
+double f(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
+
+    double startTime = omp_get_wtime();
+
+//    int intendedConfig;
+//
+//    while(true){
+//
+//        usleep(100000);
+//
+//        eyes.lookScreen();
+//
+//        Eigen::VectorXd XTemp = eyes.returnVectorImage();
+//
+//        //eyes.printXVector( XTemp );
+//
+//        marioAI.feedForwardPropagate( XTemp );
+//
+//        intendedConfig = marioAI.returnPrediction();
+//
+//        controller.setControllerConfig( intendedConfig );
+//
+//        controller.printPressedButtons( intendedConfig );
+//
+//    }
+
+    return omp_get_wtime() - startTime;
+
+}
+
+void anneal(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
+
+    //f(marioAI,eyes,controller);
+
+    return;
+
+}
+
+void selfTeachNeuralNetwork(){
+
+    std::cout << "Open emulator window..." << std::endl;
+    for(int i=2;i>=0;i--){
+        sleep(1);
+        std::cout << i << std::endl;
+    }
+    std::cout << "go" << std::endl;
+
+    Eyes eyes;
+    SnesController controller;
+
+    int layerTest[LAYERS] = LAYER_ARRAY;
+
+    NeuralNetwork marioAI(LAYERS,128,layerTest);
+    marioAI.importTheta();
+
+    double avg = AVERAGE;
+    double stdDev = STANDARD_DEVIATION;
+
+    eyes.setXStatistics(avg,stdDev);
+
+    anneal(marioAI,eyes,controller);
+
+    return;
 
 }
 

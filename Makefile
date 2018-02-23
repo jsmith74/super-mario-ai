@@ -4,12 +4,12 @@ LFLAGS = -std=c++11 -Ofast
 XLIBS = -L/usr/X11R6/lib -lX11 -lXtst
 OBJS = SnesController.o main.o Eyes.o NeuralNetwork.o
 OMPFLAGS = -fopenmp
+NAME = MarioAi
 
-
-all: MarioAi
+all: $(NAME)
 
 MarioAi: $(OBJS)
-	$(CC) $(OBJS) $(LFLAGS) $(OMPFLAGS) $(XLIBS) -o MarioAi
+	$(CC) $(OBJS) $(LFLAGS) $(OMPFLAGS) $(XLIBS) -o $(NAME)
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) $(OMPFLAGS) main.cpp
@@ -24,4 +24,4 @@ NeuralNetwork.o: NeuralNetwork.cpp
 	$(CC) $(CFLAGS) $(OMPFLAGS) NeuralNetwork.cpp
 
 clean:
-	rm *.o MarioAi *.txt
+	rm *.o *.txt $(NAME)

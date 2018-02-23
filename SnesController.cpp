@@ -31,7 +31,93 @@ SnesController::SnesController(){
     buttonSaveState = createKeyEvent(display,winFocus,winRoot,XK_k);
     buttonLoadState = createKeyEvent(display,winFocus,winRoot,XK_l);
 
+    button1 = createKeyEvent(display,winFocus,winRoot,XK_1);
+    button2 = createKeyEvent(display,winFocus,winRoot,XK_2);
+    button3 = createKeyEvent(display,winFocus,winRoot,XK_3);
+    button4 = createKeyEvent(display,winFocus,winRoot,XK_4);
+    button5 = createKeyEvent(display,winFocus,winRoot,XK_5);
+
     for(int i=0;i<7;i++) boolConfigutarion[i] = false;
+}
+
+void SnesController::toggleBG1Layer(){
+
+    button1.type = KeyPress;
+    XSendEvent(button1.display, button1.window, True, KeyPressMask, (XEvent *)&button1);
+    XFlush(button1.display);
+
+    usleep(100000);
+
+    button1.type = KeyRelease;
+    XSendEvent(button1.display, button1.window, True, KeyPressMask, (XEvent *)&button1);
+    XFlush(button1.display);
+
+    return;
+
+}
+
+void SnesController::toggleBG2Layer(){
+
+    button2.type = KeyPress;
+    XSendEvent(button2.display, button2.window, True, KeyPressMask, (XEvent *)&button2);
+    XFlush(button2.display);
+
+    usleep(100000);
+
+    button2.type = KeyRelease;
+    XSendEvent(button2.display, button2.window, True, KeyPressMask, (XEvent *)&button2);
+    XFlush(button2.display);
+
+    return;
+
+}
+
+void SnesController::toggleBG3Layer(){
+
+    button3.type = KeyPress;
+    XSendEvent(button3.display, button3.window, True, KeyPressMask, (XEvent *)&button3);
+    XFlush(button3.display);
+
+    usleep(100000);
+
+    button3.type = KeyRelease;
+    XSendEvent(button3.display, button3.window, True, KeyPressMask, (XEvent *)&button3);
+    XFlush(button3.display);
+
+    return;
+
+}
+
+void SnesController::toggleBG4Layer(){
+
+    button4.type = KeyPress;
+    XSendEvent(button4.display, button4.window, True, KeyPressMask, (XEvent *)&button4);
+    XFlush(button4.display);
+
+    usleep(100000);
+
+    button4.type = KeyRelease;
+    XSendEvent(button4.display, button4.window, True, KeyPressMask, (XEvent *)&button4);
+    XFlush(button4.display);
+
+    return;
+
+}
+
+void SnesController::toggleSpriteLayer(){
+
+    button5.type = KeyPress;
+    XSendEvent(button5.display, button5.window, True, KeyPressMask, (XEvent *)&button5);
+    XFlush(button5.display);
+
+    usleep(100000);
+
+    button5.type = KeyRelease;
+    XSendEvent(button5.display, button5.window, True, KeyPressMask, (XEvent *)&button5);
+    XFlush(button5.display);
+
+    return;
+
 }
 
 void SnesController::monitorController(){
@@ -392,7 +478,6 @@ void SnesController::pressA(){
     //XTestFakeKeyEvent(buttonA.display, buttonA.keycode, True, 0);
     buttonA.type = KeyPress;
     XSendEvent(buttonA.display, buttonA.window, True, KeyPressMask, (XEvent *)&buttonA);
-
     XFlush(buttonA.display);
 
 }

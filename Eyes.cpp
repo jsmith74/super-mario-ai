@@ -2,6 +2,8 @@
 
 #define MARIO_HAT_RED 16269424
 #define STRIDE 2
+#define DOUBLECHECK 1e-10
+#define REF_TRIANGLE_SIZE 5
 
 int Eyes::idx(int& x,int& y){
 
@@ -61,7 +63,96 @@ void Eyes::setXStatistics(double XAverage,double XStandardDeviation){
     avgX = XAverage;
     stdDevX = XStandardDeviation;
 
+    marioHatRed = MARIO_HAT_RED - avgX;
+    marioHatRed /= stdDevX;
+
     return;
+
+}
+
+void Eyes::setBackgroundColor(){
+
+    lookScreen();
+
+    backgroundColor = pixels( pixels.rows()/2 , pixels.cols()/2 );
+
+    int misses = 0;
+    int total = 0;
+
+    for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++){
+        if( !isApprox(pixels(x,y),backgroundColor) ) misses++;
+        total++;
+    }
+
+    assert( ( 1.0 * misses ) / total < 0.02 );
+
+    return;
+
+}
+
+
+void Eyes::initializeReferenceTriangle(){
+
+    lookScreen();
+
+    for(int i=0;i<REF_TRIANGLE_SIZE;i++){
+
+        bool findingSolution = true;
+
+        while(findingSolution){
+
+            refTriangle[i][0] = rand() % pixels.rows();
+            refTriangle[i][1] = rand() % pixels.cols();
+
+            bool inBackground;
+            if( isApprox( backgroundColor,pixels( refTriangle[i][0],refTriangle[i][1] ) ) ) inBackground = true;
+            else inBackground = false;
+
+            int direction = rand() % 4;
+
+            while( true ){
+
+                if( refTriangle[i][0] < 0 || refTriangle[i][0] >= pixels.rows() ) break;
+                if( refTriangle[i][1] < 0 || refTriangle[i][1] >= pixels.cols() ) break;
+
+                if( isApprox( backgroundColor,pixels( refTriangle[i][0],refTriangle[i][1] ) )  != inBackground ){
+
+                    findingSolution = false;
+                    break;
+
+                }
+
+                if(direction == 0) refTriangle[i][0]++;
+                if(direction == 1) refTriangle[i][0]--;
+                if(direction == 2) refTriangle[i][1]++;
+                if(direction == 3) refTriangle[i][1]--;
+
+            }
+
+        }
+
+    }
+
+    return;
+
+}
+
+void Eyes::findMario(){
+
+    for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++){
+
+        if( isApprox(marioHatRed,pixels(x,y)) ){   marioLoc[0] = x;  marioLoc[1] = y;  break;   }
+
+    }
+
+    return;
+
+}
+
+bool Eyes::isApprox(double& d1,double& d2){
+
+    if( d1 > d2 - DOUBLECHECK && d1 < d2 + DOUBLECHECK ) return true;
+    else return false;
 
 }
 
@@ -122,7 +213,7 @@ void Eyes::printLastSeen(){
 
 }
 
-void Eyes::printLastSeen(std::ofstream& outfile){
+void Eyes::printLastX(std::ofstream& outfile){
 
     for(int y=0;y<pixels.cols();y++) for(int x=0;x<pixels.rows();x++) outfile << pixels( x,y ) << "\t";
 

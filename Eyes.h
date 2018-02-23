@@ -8,6 +8,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+
+#define REF_TRIANGLE_SIZE 5
 
 class Eyes{
 
@@ -17,10 +20,13 @@ class Eyes{
 
         void lookScreen();
         void printLastSeen();
+        void findMario();
         void printScreenSection(int xStart,int xEnd,int yStart,int yEnd);
-        void printLastSeen(std::ofstream& outfile);
+        void printLastX(std::ofstream& outfile);
         void printXVector(Eigen::VectorXd X);
         void setXStatistics(double XAverage,double XStandardDeviation);
+        void setBackgroundColor();
+        void initializeReferenceTriangle();
         Eigen::VectorXd returnVectorImage();
 
     private:
@@ -39,7 +45,12 @@ class Eyes{
 
         Eigen::MatrixXd convolve(Eigen::MatrixXd& M,Eigen::MatrixXd& filter,int stride);
 
-        double avgX, stdDevX;
+        double avgX, stdDevX, marioHatRed, backgroundColor;
+        int marioLoc[2];
+
+        int refTriangle[REF_TRIANGLE_SIZE][2];
+
+        bool isApprox(double& d1,double& d2);
 
 };
 

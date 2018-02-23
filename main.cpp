@@ -11,8 +11,8 @@
 #define STANDARD_DEVIATION 7370946.75339683
 #define TEST_SAMPLE 14
 
-#define LAYERS 5
-#define LAYER_ARRAY {56388,20,20,20,128}
+#define LAYERS 3
+#define LAYER_ARRAY {56388,20,128}
 
 void createTrainingData();
 void play();
@@ -42,27 +42,40 @@ double f(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
     double startTime = omp_get_wtime();
 
-//    int intendedConfig;
-//
-//    while(true){
-//
-//        usleep(100000);
-//
-//        eyes.lookScreen();
-//
-//        Eigen::VectorXd XTemp = eyes.returnVectorImage();
-//
-//        //eyes.printXVector( XTemp );
-//
-//        marioAI.feedForwardPropagate( XTemp );
-//
-//        intendedConfig = marioAI.returnPrediction();
-//
-//        controller.setControllerConfig( intendedConfig );
-//
-//        controller.printPressedButtons( intendedConfig );
-//
-//    }
+    int intendedConfig;
+
+    eyes.initializeReferenceTriangle();
+
+    while(true){
+
+        usleep(100000);
+
+        eyes.lookScreen();
+
+        Eigen::VectorXd XTemp = eyes.returnVectorImage();
+
+        eyes.printXVector( XTemp );
+
+        eyes.printScreenSection(25,100,25,100);
+
+        eyes.findMario();
+
+        // UP TO HERE - TAKE A MAJORITY VOTE OF "REFERENCE TRIANGLE"
+        // AS AN ERROR CORRECTION, USE IT WITH MARIO POSITION TO CALCULATE HOW FAR MARIO MOVES
+        // OUTPUT THAT DISTANCE OF THIS FUNCTION FACTOR IN TIME AND OPTIMIZE WITH ANNEALING
+        // USE SAVE AND LOAD STATES TO ITERATE TRIALS, FIND A WAY TO DETERMINE IF YOU WON OR LOST
+
+        break;
+
+        marioAI.feedForwardPropagate( XTemp );
+
+        intendedConfig = marioAI.returnPrediction();
+
+        controller.setControllerConfig( intendedConfig );
+
+        controller.printPressedButtons( intendedConfig );
+
+    }
 
     return omp_get_wtime() - startTime;
 
@@ -70,7 +83,7 @@ double f(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
 void anneal(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
-    //f(marioAI,eyes,controller);
+    f(marioAI,eyes,controller);
 
     return;
 
@@ -78,7 +91,10 @@ void anneal(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
 void selfTeachNeuralNetwork(){
 
-    std::cout << "Open emulator window..." << std::endl;
+    srand(611*time(NULL));
+
+    std::cout << "Set Mario at the beginning of training level" << std::endl;
+    std::cout << " and unload layers 2 and 3 in ZSNES." << std::endl;
     for(int i=2;i>=0;i--){
         sleep(1);
         std::cout << i << std::endl;
@@ -97,6 +113,16 @@ void selfTeachNeuralNetwork(){
     double stdDev = STANDARD_DEVIATION;
 
     eyes.setXStatistics(avg,stdDev);
+
+    controller.toggleBG1Layer();
+    controller.toggleBG4Layer();
+    controller.toggleSpriteLayer();
+
+    eyes.setBackgroundColor();
+
+    controller.toggleBG1Layer();
+    controller.toggleBG4Layer();
+    controller.toggleSpriteLayer();
 
     anneal(marioAI,eyes,controller);
 
@@ -244,7 +270,7 @@ void createTrainingData(){
             usleep(200000);
             eyes.lookScreen();
             controller.pollController();
-            eyes.printLastSeen(outfile);
+            eyes.printLastX(outfile);
             outfile << std::endl;
             outfile.close();
             outfile.open("Y.dat",std::ofstream::app);

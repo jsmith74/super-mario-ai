@@ -55,6 +55,12 @@ class SnesController{
         void setControllerConfig(int config);
         int configuration;
 
+        void toggleBG1Layer();
+        void toggleBG2Layer();
+        void toggleBG3Layer();
+        void toggleBG4Layer();
+        void toggleSpriteLayer();
+
     private:
         XKeyEvent createKeyEvent(Display *display, Window &win,Window &winRoot, int keycode);
 
@@ -63,7 +69,7 @@ class SnesController{
         Window winRoot;
         XKeyEvent buttonUP, buttonDOWN, buttonLEFT, buttonRIGHT, buttonL, buttonR;
         XKeyEvent buttonSTART, buttonSELECT, buttonY, buttonX, buttonA, buttonB;
-        XKeyEvent buttonSaveState,buttonLoadState;
+        XKeyEvent buttonSaveState,buttonLoadState, button1, button2, button3, button4, button5;
 
         bool boolConfigutarion[7];
 

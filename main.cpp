@@ -46,6 +46,8 @@ double f(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
     eyes.initializeReferenceTriangle();
 
+    eyes.findMario();
+
     while(true){
 
         usleep(100000);
@@ -56,14 +58,9 @@ double f(NeuralNetwork& marioAI,Eyes& eyes,SnesController& controller){
 
         eyes.printXVector( XTemp );
 
-        eyes.printScreenSection(25,100,25,100);
+        eyes.updateReferenceTriangle();
 
         eyes.findMario();
-
-        // UP TO HERE - TAKE A MAJORITY VOTE OF "REFERENCE TRIANGLE"
-        // AS AN ERROR CORRECTION, USE IT WITH MARIO POSITION TO CALCULATE HOW FAR MARIO MOVES
-        // OUTPUT THAT DISTANCE OF THIS FUNCTION FACTOR IN TIME AND OPTIMIZE WITH ANNEALING
-        // USE SAVE AND LOAD STATES TO ITERATE TRIALS, FIND A WAY TO DETERMINE IF YOU WON OR LOST
 
         break;
 

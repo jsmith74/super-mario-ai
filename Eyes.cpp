@@ -3,7 +3,8 @@
 #define MARIO_HAT_RED 16269424
 #define STRIDE 2
 #define DOUBLECHECK 1e-10
-#define REF_TRIANGLE_SIZE 5
+#define REF_TRIANGLE_SIZE 7
+#define PIXEL_CHECK_RANGE 500
 
 int Eyes::idx(int& x,int& y){
 
@@ -90,6 +91,109 @@ void Eyes::setBackgroundColor(){
 
 }
 
+void Eyes::setVerticalDisplacement(int& i){
+
+    bool inBackground;
+
+    if( isApprox( backgroundColor,pixels( refTriangleVert[i][0],refTriangleVert[i][1] ) ) ) inBackground = true;
+
+    for(int j=0;j<PIXEL_CHECK_RANGE;j++){
+
+        if( refTriangleVert[i][1] + j >= pixels.cols() ){ }
+
+        else if( isApprox( backgroundColor,pixels( refTriangleVert[i][0],refTriangleVert[i][1] + j ) ) != inBackground ){
+
+            if( refTriangleVertBackground[i] == inBackground ) j--;
+
+            verticalDisplacement[i] = j;
+
+            refTriangleVert[i][1] += j;
+
+            return;
+
+        }
+
+        if( refTriangleVert[i][1] - j < 0 ){ }
+
+        else if( isApprox( backgroundColor,pixels( refTriangleVert[i][0],refTriangleVert[i][1] - j ) ) != inBackground ){
+
+            if( refTriangleVertBackground[i] == inBackground ) j--;
+
+            verticalDisplacement[i] = -j;
+
+            refTriangleVert[i][1] -= j;
+
+            return;
+
+        }
+
+    }
+
+    verticalDisplacement[i] = rand();
+
+    return;
+
+}
+
+void Eyes::setHorizontalDisplacement(int& i){
+
+    bool inBackground;
+
+    if( isApprox( backgroundColor,pixels( refTriangleHori[i][0],refTriangleHori[i][1] ) ) ) inBackground = true;
+
+    for(int j=0;j<PIXEL_CHECK_RANGE;j++){
+
+        if( refTriangleHori[i][0] + j >= pixels.rows() ){ }
+
+        else if( isApprox( backgroundColor,pixels( refTriangleHori[i][0] + j,refTriangleHori[i][1] ) ) != inBackground ){
+
+            if( refTriangleHoriBackground[i] == inBackground ) j--;
+
+            horizontalDisplacement[i] = j;
+
+            refTriangleHori[i][0] += j;
+
+            return;
+
+        }
+
+        if( refTriangleHori[i][0] - j < 0 ){ }
+
+        else if( isApprox( backgroundColor,pixels( refTriangleHori[i][0] - j,refTriangleHori[i][1] ) ) != inBackground ){
+
+            if( refTriangleHoriBackground[i] == inBackground ) j--;
+
+            horizontalDisplacement[i] = -j;
+
+            refTriangleHori[i][0] -= j;
+
+            return;
+
+        }
+
+    }
+
+    horizontalDisplacement[i] = rand();
+
+    return;
+
+}
+
+void Eyes::updateReferenceTriangle(){
+
+    for(int i=0;i<REF_TRIANGLE_SIZE;i++){
+
+        setVerticalDisplacement(i);
+
+        setHorizontalDisplacement(i);
+
+    }
+
+    for(int j=0;j<REF_TRIANGLE_SIZE;j++) std::cout << "D: " << horizontalDisplacement[j] << "\t" << verticalDisplacement[j] << std::endl;
+
+    return;
+
+}
 
 void Eyes::initializeReferenceTriangle(){
 
@@ -101,35 +205,75 @@ void Eyes::initializeReferenceTriangle(){
 
         while(findingSolution){
 
-            refTriangle[i][0] = rand() % pixels.rows();
-            refTriangle[i][1] = rand() % pixels.cols();
+            refTriangleVert[i][0] = rand() % pixels.rows();
+            refTriangleVert[i][1] = rand() % pixels.cols();
 
             bool inBackground;
-            if( isApprox( backgroundColor,pixels( refTriangle[i][0],refTriangle[i][1] ) ) ) inBackground = true;
+            if( isApprox( backgroundColor,pixels( refTriangleVert[i][0],refTriangleVert[i][1] ) ) ) inBackground = true;
             else inBackground = false;
 
-            int direction = rand() % 4;
+            int direction = rand() % 2;
 
             while( true ){
 
-                if( refTriangle[i][0] < 0 || refTriangle[i][0] >= pixels.rows() ) break;
-                if( refTriangle[i][1] < 0 || refTriangle[i][1] >= pixels.cols() ) break;
+                if( refTriangleVert[i][0] < 0 || refTriangleVert[i][0] >= pixels.rows() ) break;
+                if( refTriangleVert[i][1] < 0 || refTriangleVert[i][1] >= pixels.cols() ) break;
 
-                if( isApprox( backgroundColor,pixels( refTriangle[i][0],refTriangle[i][1] ) )  != inBackground ){
+                if( isApprox( backgroundColor,pixels( refTriangleVert[i][0],refTriangleVert[i][1] ) )  != inBackground ){
 
+                    refTriangleVertBackground[i] = !inBackground;
                     findingSolution = false;
                     break;
 
                 }
 
-                if(direction == 0) refTriangle[i][0]++;
-                if(direction == 1) refTriangle[i][0]--;
-                if(direction == 2) refTriangle[i][1]++;
-                if(direction == 3) refTriangle[i][1]--;
+                if(direction == 0) refTriangleVert[i][1]++;
+                if(direction == 1) refTriangleVert[i][1]--;
 
             }
 
         }
+
+        findingSolution = true;
+
+        while(findingSolution){
+
+            refTriangleHori[i][0] = rand() % pixels.rows();
+            refTriangleHori[i][1] = rand() % pixels.cols();
+
+            bool inBackground;
+            if( isApprox( backgroundColor,pixels( refTriangleHori[i][0],refTriangleHori[i][1] ) ) ) inBackground = true;
+            else inBackground = false;
+
+            int direction = rand() % 2;
+
+            while( true ){
+
+                if( refTriangleHori[i][0] < 0 || refTriangleHori[i][0] >= pixels.rows() ) break;
+                if( refTriangleHori[i][1] < 0 || refTriangleHori[i][1] >= pixels.cols() ) break;
+
+                if( isApprox( backgroundColor,pixels( refTriangleHori[i][0],refTriangleHori[i][1] ) )  != inBackground ){
+
+                    refTriangleHoriBackground[i] = !inBackground;
+                    findingSolution = false;
+                    break;
+
+                }
+
+                if(direction == 0) refTriangleHori[i][0]++;
+                if(direction == 1) refTriangleHori[i][0]--;
+
+            }
+
+        }
+
+        std::cout << "Vertical: " << refTriangleVert[i][0] << "\t" << refTriangleVert[i][1] << "\t" << refTriangleVertBackground[i] << std::endl;
+        std::cout << "Horizontal: " << refTriangleHori[i][0] << "\t" << refTriangleHori[i][1] << "\t" << refTriangleHoriBackground[i] << std::endl << std::endl;
+
+        pixels(refTriangleVert[i][0],refTriangleVert[i][1]) = -3;
+        pixels(refTriangleHori[i][0],refTriangleHori[i][1]) =  3;
+
+        printLastSeen();
 
     }
 

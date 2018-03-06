@@ -10,7 +10,7 @@
 #include <fstream>
 #include <iomanip>
 
-#define REF_TRIANGLE_SIZE 5
+#define REF_TRIANGLE_SIZE 7
 
 class Eyes{
 
@@ -27,6 +27,7 @@ class Eyes{
         void setXStatistics(double XAverage,double XStandardDeviation);
         void setBackgroundColor();
         void initializeReferenceTriangle();
+        void updateReferenceTriangle();
         Eigen::VectorXd returnVectorImage();
 
     private:
@@ -47,10 +48,18 @@ class Eyes{
 
         double avgX, stdDevX, marioHatRed, backgroundColor;
         int marioLoc[2];
+        int marioLocOld[2];
 
-        int refTriangle[REF_TRIANGLE_SIZE][2];
+        bool refTriangleVertBackground[REF_TRIANGLE_SIZE];
+        bool refTriangleHoriBackground[REF_TRIANGLE_SIZE];
+        int refTriangleVert[REF_TRIANGLE_SIZE][2];
+        int refTriangleHori[REF_TRIANGLE_SIZE][2];
+        int horizontalDisplacement[REF_TRIANGLE_SIZE];
+        int verticalDisplacement[REF_TRIANGLE_SIZE];
 
         bool isApprox(double& d1,double& d2);
+        void setVerticalDisplacement(int& i);
+        void setHorizontalDisplacement(int& i);
 
 };
 
